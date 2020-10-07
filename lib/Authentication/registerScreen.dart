@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ecom/Widgets/customTextField.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -49,9 +50,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Form(
             key: _formKey,
             child: Column(
-              children: [],
+              children: [
+                CustomTextField(
+                  controller: _nameTextEditingController,
+                  data: Icons.person,
+                  hintText: "Name",
+                  isObsecure: false,
+                ),
+                CustomTextField(
+                  controller: _emailTextEditingController,
+                  data: Icons.alternate_email_sharp,
+                  hintText: "Email",
+                  isObsecure: false,
+                ),
+                CustomTextField(
+                  controller: _passwordTextEditingController,
+                  data: Icons.lock_outline_sharp,
+                  hintText: "Password",
+                  isObsecure: true,
+                ),
+                CustomTextField(
+                  controller: _cPasswordTextEditingController,
+                  data: Icons.lock_outline_sharp,
+                  hintText: "Name",
+                  isObsecure: true,
+                )
+              ],
             ),
-          )
+          ),
+          RaisedButton(
+            onPressed: () => ("clicked"),
+            color: Colors.greenAccent,
+            child: Text(
+              "Register",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+          SizedBox(height: 30.0),
+          Container(
+            height: 4.0,
+            width: _screenWidth * 0.8,
+            color: Colors.green,
+          ),
+          SizedBox(height: 15.0)
         ],
       ),
     ));
