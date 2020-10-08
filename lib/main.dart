@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Authentication/AuthScreen.dart';
 import 'Config/config.dart';
@@ -10,7 +12,9 @@ import 'Store/StoreHome.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  EcomApp.auth = FirebaseAuth.instance;
+  EcomApp.sharedPreferences = await SharedPreferences.getInstance();
+  EcomApp.firestore = FirebaseFirestore.instance;
   runApp(MyApp());
 }
 
@@ -49,9 +53,9 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    EcomApp.auth = FirebaseAuth.instance;
+
     displaySplash();
   }
 

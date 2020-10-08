@@ -1,11 +1,14 @@
 import 'dart:io';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom/DialogBox/errorDialog.dart';
 import 'package:ecom/DialogBox/loadingDialog.dart';
+import 'package:ecom/Store/StoreHome.dart';
 import 'package:ecom/Widgets/customTextField.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ecom/Config/config.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -164,5 +167,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       _registerUser();
     });
+  }
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  void _registerUser() async {
+    User firebaseUser;
+
+    await _auth
+        .createUserWithEmailAndPassword(
+      email: _emailTextEditingController.text.trim(),
+      password: _passwordTextEditingController.text.trim(),
+    )
+        .then((auth) {
+      firebaseUser = auth.user;
+    }).catchError((error) {
+      Navigator.pop(context);
+      showDialog(
+          context: context,
+          builder: (c) {
+            return ErrorAlertDialog(message: error.message.toString());
+          });
+    });
+
+    if (firebaseUser != null) {
+      saveUserInfotoFireStore(firebaseUser).then((value) {
+        Navigator.pop(context);
+        Route route = MaterialPageRoute(builder: (c) => StoreHomeScreen());
+        Navigator.pushReplacement(context, route);
+      });
+    }
+  }
+
+  saveUserInfotoFireStore(User fUser) async {
+    FirebaseFirestore.instance.collection("users").doc(fUser.uid).set({
+      "uid": fUser.uid,
+      "email": fUser.email,
+      "name": _nameTextEditingController.text.trim(),
+      "url": userImageurl,
+    });
+
+    await EcomApp.sharedPreferences.setString(EcomApp.userUID, fUser.uid);
+    await EcomApp.sharedPreferences.setString(EcomApp.userEmail, fUser.email);
+    await EcomApp.sharedPreferences
+        .setString(EcomApp.userName, _nameTextEditingController.text);
+    await EcomApp.sharedPreferences
+        .setString(EcomApp.userAvatarUrl, userImageurl);
+    await EcomApp.sharedPreferences
+        .setStringList(EcomApp.userCartList, ["garbageValue"]);
   }
 }
