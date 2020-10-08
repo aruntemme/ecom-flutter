@@ -1,7 +1,11 @@
 import 'dart:io';
 
+import 'package:ecom/DialogBox/errorDialog.dart';
+import 'package:ecom/DialogBox/loadingDialog.dart';
 import 'package:ecom/Widgets/customTextField.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -19,7 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String userImageurl = "";
-  File _imageFile;
+  PickedFile _imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +35,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         mainAxisSize: MainAxisSize.max,
         children: [
           InkWell(
-            onTap: () => print("selected"),
+            onTap: () => _selectAndPickImage(),
             child: CircleAvatar(
               radius: _screenWidth * 0.15,
               backgroundColor: Colors.white,
               backgroundImage:
-                  _imageFile == null ? null : FileImage(_imageFile),
+                  _imageFile == null ? null : FileImage(File(_imageFile.path)),
               child: _imageFile == null
                   ? Icon(
                       Icons.add_a_photo_outlined,
@@ -79,7 +83,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           RaisedButton(
-            onPressed: () => ("clicked"),
+            onPressed: () {
+              uploadAndSaveImage();
+            },
             color: Colors.greenAccent,
             child: Text(
               "Register",
@@ -98,5 +104,65 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ],
       ),
     ));
+  }
+
+  Future<void> _selectAndPickImage() async {
+    _imageFile = await ImagePicker().getImage(source: ImageSource.gallery);
+  }
+
+  Future<void> uploadAndSaveImage() async {
+    if (_imageFile == null) {
+      showDialog(
+          context: context,
+          builder: (c) {
+            return ErrorAlertDialog(
+              message: "Please select an Image.",
+            );
+          });
+    } else {
+      _passwordTextEditingController.text ==
+              _cPasswordTextEditingController.text
+          ? _emailTextEditingController.text.isNotEmpty &&
+                  _passwordTextEditingController.text.isNotEmpty &&
+                  _cPasswordTextEditingController.text.isNotEmpty &&
+                  _nameTextEditingController.text.isNotEmpty
+              ? uploadToStorage()
+              : displayDialog("Please fill up the registeration form.")
+          : displayDialog("Password do not match.");
+    }
+  }
+
+  displayDialog(String msg) {
+    showDialog(
+        context: context,
+        builder: (c) {
+          return ErrorAlertDialog(message: msg);
+        });
+  }
+
+  uploadToStorage() async {
+    showDialog(
+        context: context,
+        builder: (c) {
+          return LoadingAlertDialog(
+            message: "Authenticating, Please wait...",
+          );
+        });
+
+    String imageFileName = DateTime.now().microsecondsSinceEpoch.toString();
+
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child(imageFileName);
+
+    StorageUploadTask storageUploadTask =
+        storageReference.putFile(File(_imageFile.path));
+
+    StorageTaskSnapshot taskSnapshot = await storageUploadTask.onComplete;
+
+    await taskSnapshot.ref.getDownloadURL().then((urlImage) {
+      userImageurl = urlImage;
+
+      _registerUser();
+    });
   }
 }
