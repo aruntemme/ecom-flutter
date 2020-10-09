@@ -48,11 +48,7 @@ class _StoreHomeScreenState extends State<StoreHomeScreen> {
                       top: 3.0,
                       bottom: 4.0,
                       child: Consumer<CartItemCounter>(
-                        builder: (
-                          context,
-                          counter,
-                          _,
-                        ) {
+                        builder: (context, counter, _) {
                           return Text(
                             counter.count.toString(),
                             style: TextStyle(

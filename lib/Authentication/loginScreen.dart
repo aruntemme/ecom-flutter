@@ -108,12 +108,14 @@ class _LoginScreenState extends State<LoginScreen> {
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   void loginUser() async {
+    print("hello");
     showDialog(
         context: context,
         builder: (c) {
           return LoadingAlertDialog(message: "Logging in, please wait...");
         });
     User firebaseUser;
+    print("hello2");
     await _auth
         .signInWithEmailAndPassword(
       email: _emailTextEditingController.text.trim(),
@@ -121,6 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
     )
         .then((authUser) {
       firebaseUser = authUser.user;
+      print(firebaseUser);
     }).catchError((error) {
       Navigator.pop(context);
       showDialog(
@@ -129,6 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
             return ErrorAlertDialog(message: error.message.toString());
           });
     });
+    print(firebaseUser);
     if (firebaseUser != null) {
       readData(firebaseUser).then((s) {
         Navigator.pop(context);
