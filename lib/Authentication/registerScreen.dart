@@ -148,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         context: context,
         builder: (c) {
           return LoadingAlertDialog(
-            message: "Authenticating, Please wait...",
+            message: "Registering new user, Please wait...",
           );
         });
 

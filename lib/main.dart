@@ -12,36 +12,24 @@ import 'Store/StoreHome.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  EcomApp.auth = FirebaseAuth.instance;
+  await Firebase.initializeApp();
+  EcomApp.auth = await FirebaseAuth.instance;
   EcomApp.sharedPreferences = await SharedPreferences.getInstance();
   EcomApp.firestore = FirebaseFirestore.instance;
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initialization,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(child: Text('Something went wrong'));
-        }
-        if (snapshot.connectionState == ConnectionState.done) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'ecom-flutter',
-            theme: ThemeData(
-                accentColor: Colors.deepPurpleAccent,
-                primaryColor: Colors.blueAccent),
-            home: SplashScreen(),
-          );
-        }
-        return Center(child: CircularProgressIndicator());
-      },
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'ecom-flutter',
+      theme: ThemeData(
+          accentColor: Colors.deepPurpleAccent,
+          primaryColor: Colors.blueAccent),
+      home: SplashScreen(),
     );
   }
 }
@@ -53,9 +41,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-
     displaySplash();
   }
 

@@ -9,7 +9,9 @@ class _StoreHomeScreenState extends State<StoreHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      body: Center(
+        child: Text("hello"),
+      ),
     );
   }
 }
