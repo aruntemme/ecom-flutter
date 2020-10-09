@@ -3,7 +3,7 @@ import 'package:ecom/Admin/adminSignIn.dart';
 import 'package:ecom/Config/config.dart';
 import 'package:ecom/DialogBox/errorDialog.dart';
 import 'package:ecom/DialogBox/loadingDialog.dart';
-import 'package:ecom/Store/StoreHome.dart';
+import 'package:ecom/Store/storeHome.dart';
 import 'package:ecom/Widgets/customTextField.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

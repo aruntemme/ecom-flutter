@@ -2,13 +2,11 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'Authentication/AuthScreen.dart';
+import 'Authentication/authScreen.dart';
 import 'Config/config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'Store/StoreHome.dart';
+import 'Store/storeHome.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

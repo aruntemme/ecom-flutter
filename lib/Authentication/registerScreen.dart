@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom/DialogBox/errorDialog.dart';
 import 'package:ecom/DialogBox/loadingDialog.dart';
-import 'package:ecom/Store/StoreHome.dart';
+import 'package:ecom/Store/storeHome.dart';
 import 'package:ecom/Widgets/customTextField.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
