@@ -204,6 +204,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "email": fUser.email,
       "name": _nameTextEditingController.text.trim(),
       "url": userImageurl,
+      EcomApp.userCartList: ["garbageValue"],
     });
 
     await EcomApp.sharedPreferences.setString(EcomApp.userUID, fUser.uid);

@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom/Admin/adminSignIn.dart';
+import 'package:ecom/Config/config.dart';
 import 'package:ecom/DialogBox/errorDialog.dart';
 import 'package:ecom/DialogBox/loadingDialog.dart';
+import 'package:ecom/Store/StoreHome.dart';
 import 'package:ecom/Widgets/customTextField.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -101,11 +105,57 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
   void loginUser() async {
     showDialog(
         context: context,
         builder: (c) {
           return LoadingAlertDialog(message: "Logging in, please wait...");
         });
+    User firebaseUser;
+    await _auth
+        .signInWithEmailAndPassword(
+      email: _emailTextEditingController.text.trim(),
+      password: _passwordTextEditingController.text.trim(),
+    )
+        .then((authUser) {
+      firebaseUser = authUser.user;
+    }).catchError((error) {
+      Navigator.pop(context);
+      showDialog(
+          context: context,
+          builder: (c) {
+            return ErrorAlertDialog(message: error.message.toString());
+          });
+    });
+    if (firebaseUser != null) {
+      readData(firebaseUser).then((s) {
+        Navigator.pop(context);
+        Route route = MaterialPageRoute(builder: (c) => StoreHomeScreen());
+        Navigator.pushReplacement(context, route);
+      });
+    }
+  }
+
+  Future<void> readData(User fUser) async {
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(fUser.uid)
+        .get()
+        .then((dataSnapshot) async {
+      await EcomApp.sharedPreferences
+          .setString("uid", dataSnapshot.data()[EcomApp.userUID]);
+      await EcomApp.sharedPreferences
+          .setString(EcomApp.userEmail, dataSnapshot.data()[EcomApp.userEmail]);
+      await EcomApp.sharedPreferences
+          .setString(EcomApp.userName, dataSnapshot.data()[EcomApp.userName]);
+      await EcomApp.sharedPreferences.setString(
+          EcomApp.userAvatarUrl, dataSnapshot.data()[EcomApp.userAvatarUrl]);
+      List<String> cartList =
+          dataSnapshot.data()[EcomApp.userCartList].cast<String>();
+      await EcomApp.sharedPreferences
+          .setStringList(EcomApp.userCartList, cartList);
+    });
   }
 }
