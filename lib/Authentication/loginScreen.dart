@@ -29,10 +29,10 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         children: [
           Container(
-            child: Image.asset(
-              "",
-              height: 240.0,
-              width: 240.0,
+            child: Icon(
+              Icons.home_filled,
+              // height: 240.0,
+              // width: 240.0,
             ),
           ),
           Padding(
