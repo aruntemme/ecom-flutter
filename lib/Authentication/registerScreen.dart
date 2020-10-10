@@ -79,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 CustomTextField(
                   controller: _cPasswordTextEditingController,
                   data: Icons.lock_outline_sharp,
-                  hintText: "Name",
+                  hintText: "Confirm Password",
                   isObsecure: true,
                 )
               ],

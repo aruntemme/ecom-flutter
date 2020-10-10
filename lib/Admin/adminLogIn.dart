@@ -1,25 +1,50 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecom/Admin/adminLogIn.dart';
-import 'package:ecom/Config/config.dart';
+import 'package:ecom/Admin/uploadScreen.dart';
+import 'package:ecom/Authentication/authScreen.dart';
 import 'package:ecom/DialogBox/errorDialog.dart';
-import 'package:ecom/DialogBox/loadingDialog.dart';
-import 'package:ecom/Store/storeHome.dart';
 import 'package:ecom/Widgets/customTextField.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
+class AdminLoginScreen extends StatelessWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(color: Colors.black
+              // gradient: LinearGradient(
+              //   colors: [Color(0xffec008c), Color(0xfffc6767)],
+              //   begin: const FractionalOffset(0.0, 0.0),
+              //   end: const FractionalOffset(1.0, 0.0),
+              //   stops: [0.0, 1.0],
+              //   tileMode: TileMode.clamp,
+              // ),
+              ),
+        ),
+        title: Text(
+          "Shopy",
+          style: TextStyle(
+              fontSize: 30.0, color: Colors.white, fontFamily: "GoogleSans"),
+        ),
+        centerTitle: true,
+      ),
+      body: AdminLoginPage(),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailTextEditingController =
+class AdminLoginPage extends StatefulWidget {
+  @override
+  _AdminLoginPageState createState() => _AdminLoginPageState();
+}
+
+class _AdminLoginPageState extends State<AdminLoginPage> {
+  final TextEditingController _adminIDTextEditingController =
       TextEditingController();
   final TextEditingController _passwordTextEditingController =
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     double _screenWidth = MediaQuery.of(context).size.width,
@@ -38,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Login to your account",
+              "Login to your Admin account",
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -47,9 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 CustomTextField(
-                  controller: _emailTextEditingController,
+                  controller: _adminIDTextEditingController,
                   data: Icons.alternate_email_sharp,
-                  hintText: "Email",
+                  hintText: "Admin ID",
                   isObsecure: false,
                 ),
                 CustomTextField(
@@ -63,9 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           RaisedButton(
             onPressed: () {
-              _emailTextEditingController.text.isNotEmpty &&
+              _adminIDTextEditingController.text.isNotEmpty &&
                       _passwordTextEditingController.text.isNotEmpty
-                  ? loginUser()
+                  ? loginAdmin()
                   : showDialog(
                       context: context,
                       builder: (c) {
@@ -87,16 +112,16 @@ class _LoginScreenState extends State<LoginScreen> {
             width: _screenWidth * 0.8,
             color: Colors.green,
           ),
-          SizedBox(height: 15.0),
+          SizedBox(height: 50.0),
           FlatButton.icon(
               onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AdminLoginScreen())),
+                  MaterialPageRoute(builder: (context) => AuthScreen())),
               icon: Icon(
                 Icons.admin_panel_settings_outlined,
                 color: Colors.white,
               ),
               label: Text(
-                "I'm Admin",
+                "I'm not Admin",
                 style:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ))
@@ -105,61 +130,28 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  loginAdmin() {
+    FirebaseFirestore.instance.collection("admins").get().then((snapshot) {
+      snapshot.docs.forEach((result) {
+        if (result.data()["id"] != _adminIDTextEditingController.text.trim()) {
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text("Your id is incorrect")));
+        } else if (result.data()["password"] !=
+            _passwordTextEditingController.text.trim()) {
+          Scaffold.of(context).showSnackBar(
+              SnackBar(content: Text("Your password is incorrect")));
+        } else {
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text("Welcome Admin, " + result.data()["name"])));
 
-  void loginUser() async {
-    print("hello");
-    showDialog(
-        context: context,
-        builder: (c) {
-          return LoadingAlertDialog(message: "Logging in, please wait...");
-        });
-    User firebaseUser;
-    print("hello2");
-    await _auth
-        .signInWithEmailAndPassword(
-      email: _emailTextEditingController.text.trim(),
-      password: _passwordTextEditingController.text.trim(),
-    )
-        .then((authUser) {
-      firebaseUser = authUser.user;
-      print(firebaseUser);
-    }).catchError((error) {
-      Navigator.pop(context);
-      showDialog(
-          context: context,
-          builder: (c) {
-            return ErrorAlertDialog(message: error.message.toString());
+          setState(() {
+            _adminIDTextEditingController.text = "";
+            _passwordTextEditingController.text = "";
           });
-    });
-    print(firebaseUser);
-    if (firebaseUser != null) {
-      readData(firebaseUser).then((s) {
-        Navigator.pop(context);
-        Route route = MaterialPageRoute(builder: (c) => StoreHomeScreen());
-        Navigator.pushReplacement(context, route);
+          Route route = MaterialPageRoute(builder: (c) => UploadScreen());
+          Navigator.pushReplacement(context, route);
+        }
       });
-    }
-  }
-
-  Future<void> readData(User fUser) async {
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(fUser.uid)
-        .get()
-        .then((dataSnapshot) async {
-      await EcomApp.sharedPreferences
-          .setString("uid", dataSnapshot.data()[EcomApp.userUID]);
-      await EcomApp.sharedPreferences
-          .setString(EcomApp.userEmail, dataSnapshot.data()[EcomApp.userEmail]);
-      await EcomApp.sharedPreferences
-          .setString(EcomApp.userName, dataSnapshot.data()[EcomApp.userName]);
-      await EcomApp.sharedPreferences.setString(
-          EcomApp.userAvatarUrl, dataSnapshot.data()[EcomApp.userAvatarUrl]);
-      List<String> cartList =
-          dataSnapshot.data()[EcomApp.userCartList].cast<String>();
-      await EcomApp.sharedPreferences
-          .setStringList(EcomApp.userCartList, cartList);
     });
   }
 }
