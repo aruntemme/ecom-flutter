@@ -12,15 +12,7 @@ class AdminLoginScreen extends StatelessWidget {
       backgroundColor: Colors.black,
       appBar: AppBar(
         flexibleSpace: Container(
-          decoration: BoxDecoration(color: Colors.black
-              // gradient: LinearGradient(
-              //   colors: [Color(0xffec008c), Color(0xfffc6767)],
-              //   begin: const FractionalOffset(0.0, 0.0),
-              //   end: const FractionalOffset(1.0, 0.0),
-              //   stops: [0.0, 1.0],
-              //   tileMode: TileMode.clamp,
-              // ),
-              ),
+          decoration: BoxDecoration(color: Colors.black),
         ),
         title: Text(
           "Shopy",
