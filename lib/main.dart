@@ -25,9 +25,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'ecom-flutter',
       theme: ThemeData(
+          iconTheme: IconThemeData(color: Colors.black),
           accentColor: Colors.deepPurpleAccent,
           fontFamily: "GoogleSans",
-          primaryColor: Colors.blueAccent),
+          primaryColor: Colors.black),
       home: SplashScreen(),
     );
   }
@@ -46,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   displaySplash() {
-    Timer(Duration(seconds: 5), () async {
+    Timer(Duration(seconds: 4), () async {
       if (await EcomApp.auth.currentUser != null) {
         Route route = MaterialPageRoute(builder: (_) => StoreHomeScreen());
         Navigator.pushReplacement(context, route);
@@ -61,23 +62,26 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Material(
       child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.orange, Colors.redAccent],
-            begin: const FractionalOffset(0.0, 0.0),
-            end: const FractionalOffset(1.0, 0.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp,
-          ),
-        ),
+        color: Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("welcome"),
+            Text(
+              "welcome",
+              style: TextStyle(fontSize: 25.0, color: Colors.black),
+            ),
             SizedBox(height: 20.0),
             Text(
-              "ecom-app",
-              style: TextStyle(color: Colors.black),
+              "Online Store",
+              style: TextStyle(
+                  fontSize: 40.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold),
+            ),
+            Image.asset(
+              "assets/images/giphy.gif",
+              height: 250.0,
+              width: 250.0,
             ),
           ],
         ),
