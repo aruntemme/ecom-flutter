@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom/Admin/adminOrder.dart';
 import 'package:ecom/Authentication/authScreen.dart';
 import 'package:ecom/Widgets/loadingWidget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -12,14 +15,24 @@ class UploadScreen extends StatefulWidget {
 }
 
 class _UploadScreenState extends State<UploadScreen> {
+  var _categories = [
+    "Category",
+    "Electronics",
+    "Fashion - Men & Women",
+    "Medical",
+    "Home, Kitchen, Pets",
+    "Sports, Fitness, Bags",
+    "Beauty, Health, Grocery",
+    "Salary"
+  ];
+  String _dropdownValue = "Category";
+
   PickedFile file;
   TextEditingController _descriptionTextEditiongController =
       TextEditingController();
   TextEditingController _priceTextEditiongController = TextEditingController();
   TextEditingController _titleTextEditiongController = TextEditingController();
   TextEditingController _shortInfoTextEditiongController =
-      TextEditingController();
-  TextEditingController _categoryTextEditiongController =
       TextEditingController();
   String productId = DateTime.now().microsecondsSinceEpoch.toString();
   bool uploading = false;
@@ -134,7 +147,7 @@ class _UploadScreenState extends State<UploadScreen> {
         elevation: 2.0,
         label: Text("Add new Item"),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
@@ -229,7 +242,8 @@ class _UploadScreenState extends State<UploadScreen> {
               icon: Icon(MdiIcons.menuLeftOutline), onPressed: clearFormInfo),
           actions: [
             FlatButton(
-                onPressed: () => print("added"),
+                onPressed:
+                    uploading ? null : () => uploadImageAndSaveItemInfo(),
                 child: Text(
                   "Add",
                   style: TextStyle(
@@ -251,6 +265,7 @@ class _UploadScreenState extends State<UploadScreen> {
                 aspectRatio: 16 / 9,
                 child: Container(
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
                     image: DecorationImage(
                         image: FileImage(File(file.path)), fit: BoxFit.cover),
                   ),
@@ -260,81 +275,115 @@ class _UploadScreenState extends State<UploadScreen> {
           ),
           Padding(padding: EdgeInsets.only(top: 12.0)),
           ListTile(
-            leading: Icon(MdiIcons.informationOutline, color: Colors.red),
+            leading: Icon(MdiIcons.informationVariant, color: Colors.blue),
             title: Container(
               width: 250.0,
+              height: 58.0,
               child: TextField(
-                style: TextStyle(color: Colors.deepPurpleAccent),
+                style: TextStyle(color: Colors.black, fontSize: 20.0),
                 controller: _shortInfoTextEditiongController,
                 decoration: InputDecoration(
-                    hintText: "short info",
-                    hintStyle: TextStyle(color: Colors.deepPurpleAccent),
-                    border: InputBorder.none),
+                  hintText: "short info",
+                  hintStyle: TextStyle(color: Colors.blueGrey[250]),
+                  border: OutlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.teal),
+                  ),
+                ),
               ),
             ),
           ),
-          Divider(color: Colors.black),
+          Divider(color: Colors.white),
           ListTile(
-            leading: Icon(MdiIcons.informationOutline, color: Colors.red),
+            leading: Icon(MdiIcons.formatTitle, color: Colors.blue),
             title: Container(
               width: 250.0,
+              height: 58.0,
               child: TextField(
-                style: TextStyle(color: Colors.deepPurpleAccent),
+                cursorColor: Colors.black,
+                style: TextStyle(color: Colors.black, fontSize: 20.0),
                 controller: _titleTextEditiongController,
                 decoration: InputDecoration(
-                    hintText: "Title",
-                    hintStyle: TextStyle(color: Colors.deepPurpleAccent),
-                    border: InputBorder.none),
+                  hintText: "Title",
+                  hintStyle: TextStyle(color: Colors.blueGrey[250]),
+                  border: OutlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.teal),
+                  ),
+                ),
               ),
             ),
           ),
-          Divider(color: Colors.black),
+          Divider(color: Colors.white),
           ListTile(
-            leading: Icon(MdiIcons.informationOutline, color: Colors.red),
+            leading: Icon(MdiIcons.text, color: Colors.blue),
             title: Container(
               width: 250.0,
+              height: 58.0,
               child: TextField(
-                style: TextStyle(color: Colors.deepPurpleAccent),
+                cursorColor: Colors.black,
+                style: TextStyle(color: Colors.black, fontSize: 20.0),
                 controller: _descriptionTextEditiongController,
                 decoration: InputDecoration(
-                    hintText: "Description",
-                    hintStyle: TextStyle(color: Colors.deepPurpleAccent),
-                    border: InputBorder.none),
+                  hintText: "Description",
+                  hintStyle: TextStyle(color: Colors.blueGrey[250]),
+                  border: OutlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black),
+                  ),
+                ),
               ),
             ),
           ),
-          Divider(color: Colors.black),
+          Divider(color: Colors.white),
           ListTile(
-            leading: Icon(MdiIcons.informationOutline, color: Colors.red),
+            leading: Icon(MdiIcons.cash, color: Colors.blue),
             title: Container(
               width: 250.0,
+              height: 58.0,
               child: TextField(
+                cursorColor: Colors.black,
                 keyboardType: TextInputType.number,
-                style: TextStyle(color: Colors.deepPurpleAccent),
+                style: TextStyle(color: Colors.black, fontSize: 20.0),
                 controller: _priceTextEditiongController,
                 decoration: InputDecoration(
-                    hintText: "Price",
-                    hintStyle: TextStyle(color: Colors.deepPurpleAccent),
-                    border: InputBorder.none),
+                  hintText: "Price",
+                  hintStyle: TextStyle(color: Colors.blueGrey[250]),
+                  border: OutlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black),
+                  ),
+                ),
               ),
             ),
           ),
-          Divider(color: Colors.black),
+          Divider(color: Colors.white),
           ListTile(
-            leading: Icon(MdiIcons.informationOutline, color: Colors.red),
+            leading: Icon(MdiIcons.informationVariant, color: Colors.blue),
             title: Container(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2.0),
+                  color: Colors.white,
+                  border: Border.all()),
               width: 250.0,
-              child: TextField(
-                style: TextStyle(color: Colors.deepPurpleAccent),
-                controller: _categoryTextEditiongController,
-                decoration: InputDecoration(
-                    hintText: "Category",
-                    hintStyle: TextStyle(color: Colors.deepPurpleAccent),
-                    border: InputBorder.none),
+              height: 58.0,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  dropdownColor: Colors.white,
+                  focusColor: Colors.black,
+                  style: TextStyle(color: Colors.black, fontSize: 20.0),
+                  items: _categories.map((String singleItem) {
+                    return DropdownMenuItem<String>(
+                        value: singleItem, child: Text(singleItem));
+                  }).toList(),
+                  onChanged: (String itemChosen) {
+                    setState(() {
+                      this._dropdownValue = itemChosen;
+                    });
+                  },
+                  value: _dropdownValue,
+                ),
               ),
             ),
           ),
-          Divider(color: Colors.black),
+          Divider(color: Colors.white),
         ],
       ),
     );
@@ -346,8 +395,50 @@ class _UploadScreenState extends State<UploadScreen> {
       _descriptionTextEditiongController.clear();
       _shortInfoTextEditiongController.clear();
       _titleTextEditiongController.clear();
-      _categoryTextEditiongController.clear();
+      _dropdownValue = "";
       _shortInfoTextEditiongController.clear();
+    });
+  }
+
+  uploadImageAndSaveItemInfo() async {
+    setState(() {
+      uploading = true;
+    });
+    String imageDownloadURL = await uploadItemImage(File(file.path));
+    saveItemINFO(imageDownloadURL);
+  }
+
+  Future<String> uploadItemImage(mFileImage) async {
+    final StorageReference storageReference =
+        FirebaseStorage.instance.ref().child("items");
+    StorageUploadTask uploadTask =
+        storageReference.child("product_$productId.jpg").putFile(mFileImage);
+    StorageTaskSnapshot takeSnapshot = await uploadTask.onComplete;
+    String downloadUrl = await takeSnapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+  saveItemINFO(String downloadURL) {
+    final itemsRef = FirebaseFirestore.instance.collection("items");
+    itemsRef.doc(productId).set({
+      "shortInfo": _shortInfoTextEditiongController.text.trim(),
+      "title": _titleTextEditiongController.text.trim(),
+      "category": _dropdownValue.trim(),
+      "longDescription": _descriptionTextEditiongController.text.trim(),
+      "publishDate": DateTime.now(),
+      "price": _priceTextEditiongController.text.trim(),
+      "status": "available",
+      "thumbnailUrl": downloadURL,
+    });
+    setState(() {
+      file = null;
+      uploading = false;
+      productId = DateTime.now().microsecondsSinceEpoch.toString();
+      _dropdownValue = "Category";
+      _descriptionTextEditiongController.clear();
+      _shortInfoTextEditiongController.clear();
+      _titleTextEditiongController.clear();
+      _priceTextEditiongController.clear();
     });
   }
 }
