@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       title: 'ecom-flutter',
       theme: ThemeData(
           accentColor: Colors.deepPurpleAccent,
+          fontFamily: "GoogleSans",
           primaryColor: Colors.blueAccent),
       home: SplashScreen(),
     );
