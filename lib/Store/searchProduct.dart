@@ -52,6 +52,9 @@ class _SearchProductState extends State<SearchProduct> {
                 autofocus: true,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
+                  hintText: "Search",
+                  hintStyle:
+                      TextStyle(color: Colors.blueGrey[300], fontSize: 16),
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 32.0, vertical: 14.0),
                   suffixIcon: Material(

@@ -426,7 +426,7 @@ class _UploadScreenState extends State<UploadScreen> {
       "category": _dropdownValue.trim(),
       "longDescription": _descriptionTextEditiongController.text.trim(),
       "publishDate": DateTime.now(),
-      "price": _priceTextEditiongController.text.trim(),
+      "price": int.parse(_priceTextEditiongController.text),
       "status": "available",
       "thumbnailUrl": downloadURL,
     });
