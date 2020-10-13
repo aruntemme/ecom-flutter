@@ -1,3 +1,4 @@
+import 'package:ecom/Widgets/loadingWidget.dart';
 import 'package:flutter/material.dart';
 
 class LoadingAlertDialog extends StatelessWidget {
@@ -11,7 +12,7 @@ class LoadingAlertDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          // circularProgress(),
+          circularProgress(),
           SizedBox(
             height: 10,
           ),

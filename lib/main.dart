@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecom/Counters/cartItemCounter.dart';
+import 'package:ecom/Counters/changeAddress.dart';
+import 'package:ecom/Counters/itemQuantity.dart';
+import 'package:ecom/Counters/totalMoney.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Authentication/authScreen.dart';
 import 'Config/config.dart';
@@ -21,15 +26,23 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ecom-flutter',
-      theme: ThemeData(
-          iconTheme: IconThemeData(color: Colors.black),
-          accentColor: Colors.deepPurpleAccent,
-          fontFamily: "GoogleSans",
-          primaryColor: Colors.black),
-      home: SplashScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (c) => CartItemCounter()),
+        ChangeNotifierProvider(create: (c) => ItemQuantity()),
+        ChangeNotifierProvider(create: (c) => ChangeAddress()),
+        ChangeNotifierProvider(create: (c) => TotalMoney()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'ecom-flutter',
+        theme: ThemeData(
+            iconTheme: IconThemeData(color: Colors.black),
+            accentColor: Colors.deepPurpleAccent,
+            fontFamily: "GoogleSans",
+            primaryColor: Colors.black),
+        home: SplashScreen(),
+      ),
     );
   }
 }

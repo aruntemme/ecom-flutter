@@ -1,5 +1,6 @@
 import 'package:ecom/Store/cartScreen.dart';
 import 'package:ecom/Widgets/appDrawer.dart';
+import 'package:ecom/Widgets/searchBox.dart';
 import 'package:flutter/material.dart';
 import 'package:ecom/Counters/cartItemCounter.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,7 @@ class _StoreHomeScreenState extends State<StoreHomeScreen> {
           child: AppBar(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(40),
+                bottom: Radius.circular(0),
               ),
             ),
             backgroundColor: Colors.black,
@@ -65,13 +66,14 @@ class _StoreHomeScreenState extends State<StoreHomeScreen> {
                         child: Stack(
                           children: [
                             Icon(
-                              Icons.brightness_1_outlined,
+                              Icons.brightness_1,
                               size: 20.0,
-                              color: Colors.red,
+                              color: Colors.red[600],
                             ),
                             Positioned(
-                              top: 3.0,
+                              top: 2,
                               bottom: 4.0,
+                              left: 5.8,
                               child: Consumer<CartItemCounter>(
                                 builder: (context, counter, _) {
                                   return Text(
@@ -95,6 +97,11 @@ class _StoreHomeScreenState extends State<StoreHomeScreen> {
           ),
         ),
         drawer: AppDrawer(),
+        body: CustomScrollView(
+          slivers: [
+            SliverPersistentHeader(pinned: true, delegate: SearchBoxDelegate())
+          ],
+        ),
         // body: Text("hello"),
       ),
     );
