@@ -1,4 +1,6 @@
-# ecom
+# E-Commerce App - Flutter
+
+## [Work In Progress]
 
 A new Flutter project.
 
