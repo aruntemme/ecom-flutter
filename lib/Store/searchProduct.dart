@@ -1,6 +1,5 @@
 import 'package:ecom/Store/StoreHome.dart';
 import 'package:flutter/material.dart';
-import 'package:ecom/Widgets/searchBox.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SearchProduct extends StatefulWidget {

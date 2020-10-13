@@ -6,14 +6,13 @@ import 'package:ecom/Store/cartScreen.dart';
 import 'package:ecom/Store/myOrders.dart';
 import 'package:ecom/Store/searchProduct.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(60), topRight: Radius.circular(60)),
+      // borderRadius: BorderRadius.only(
+      // bottomRight: Radius.circular(60), topRight: Radius.circular(60)),
       child: SizedBox(
         width: 250,
         child: Drawer(
@@ -118,8 +117,7 @@ class AppDrawer extends StatelessWidget {
                     Divider(height: 5),
                     ListTile(
                       contentPadding: EdgeInsets.only(left: 25.0),
-                      leading:
-                          Icon(Icons.add_circle_outline, color: Colors.black),
+                      leading: Icon(Icons.add_location, color: Colors.black),
                       title: Text("Add Address",
                           style: TextStyle(
                               color: Colors.black,

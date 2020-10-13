@@ -16,7 +16,7 @@ import 'Store/storeHome.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  EcomApp.auth = await FirebaseAuth.instance;
+  EcomApp.auth = FirebaseAuth.instance;
   EcomApp.sharedPreferences = await SharedPreferences.getInstance();
   EcomApp.firestore = FirebaseFirestore.instance;
   runApp(MyApp());
@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
     displaySplash();
   }
 
-  displaySplash() {
+  displaySplash() async {
     Timer(Duration(seconds: 4), () async {
       if (await EcomApp.auth.currentUser != null) {
         Route route = MaterialPageRoute(builder: (_) => StoreHomeScreen());

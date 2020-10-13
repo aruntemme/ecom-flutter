@@ -39,8 +39,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    double _screenWidth = MediaQuery.of(context).size.width,
-        _screenHeight = MediaQuery.of(context).size.height;
+    double _screenWidth = MediaQuery.of(context).size.width;
+    //double _screenHeight = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
         child: Container(
       child: Column(
